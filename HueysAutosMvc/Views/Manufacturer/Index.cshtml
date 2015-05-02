@@ -1,0 +1,17 @@
+﻿@model IEnumerable<HueysAutosMvc.Models.Manufacturer>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<ul class="nav nav-pills" style="display: inline-block">
+    @foreach (var item in Model)
+{
+
+    <li class=@(ViewBag.SelectedManu.ToString().Equals(item.ManufacturerName) ? "active" : "")>
+
+        @Html.ActionLink(item.ManufacturerName + " (" + item.Vehicles.Count + ")", "Index", "Vehicles", new { manufacturer = item.ManufacturerName, vmodel = "" }, null)
+    </li>
+
+}
+</ul>

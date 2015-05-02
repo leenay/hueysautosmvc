@@ -1,0 +1,65 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<HueysAutosMvc.Models.Vehicle>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>We have @ViewBag.VCount @ViewBag.ManufacturerName @ViewBag.SelectedModelName Vehicles for Sale
+    @if (ViewBag.SearchString != null)
+    {
+        <b>matching @ViewBag.SearchString</b>
+    }
+    
+</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<div style="float: left; margin-right:10px" class="list-group">
+    @if (ViewBag.VModels != null)
+    {
+         foreach (HueysAutosMvc.Models.VehicleModel item in ViewBag.VModels)
+            {
+                 
+                @Html.ActionLink(item.VehicleModelName + " (" + item.Vehicles.Count + ")", "Index", new { manufacturer = this.ViewContext.RouteData.Values["manufacturer"], vmodel = item.VehicleModelName }, 
+                new
+                {
+                    @class = ViewBag.SelectedModelName.ToString().Equals(item.VehicleModelName) ? "list-group-item active" : "list-group-item"
+                })
+            }
+    }
+   
+</div>
+<div style="float: left;">
+    <table>
+
+
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.VehicleID })">
+                        <img src="@("/Images/Thumbs/" + item.ImagePath)" width="100" style="border: solid" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.ActionLink(item.VehicleName, "Details", new { id = item.VehicleID })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                    <hr />
+                </td>
+            </tr>
+
+}
+
+    </table>
+    <br/>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, manufacturer = this.ViewContext.RouteData.Values["manufacturer"], vmodel = this.ViewContext.RouteData.Values["vmodel"], searchString = ViewBag.searchString }))
+</div>

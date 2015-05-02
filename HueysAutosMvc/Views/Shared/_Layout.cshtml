@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huey's Autos</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#ManufacturerID").change(function () {
+                $("#VehicleModelID").empty();
+                $("#VehicleModelID").append('<option value="">Select Model</option>');
+                if ($("#ManufacturerID").val() != '') {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetModels")',
+                        dataType: 'json',
+                        data: { id: $("#ManufacturerID").val() },
+                        success: function (models) {
+                            
+                            $.each(models, function (i, modelitem) {
+                                $("#VehicleModelID").append('<option value="' + modelitem.Value + '">' + modelitem.Text + '</option>');
+                            });
+                        },
+                        error: function (ex) {
+                            alert('Falied to retrieve models.' + ex);
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Huey's Autos", "Index", "Home", null, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Vehicles", "Index", "Vehicles", new { manufacturer = string.Empty, vmodel = string.Empty }, null)</li>                    
+                </ul>
+                @using (Html.BeginRouteForm("VehicleIndex", FormMethod.Get, new { @class = "navbar-form navbar-left", @role = "search", manufacturer = string.Empty, vmodel = string.Empty }))
+                {
+                    <div class="form-group">
+                        @Html.TextBox("SearchString", null, new { @class = "form-control", @placeholder = "Search" })
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                }
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        <div id="Manufacturer Content" class="text-center">
+            @Html.Action("Index", "Manufacturer")
+        </div>
+        @RenderBody()
+        <div style="clear: both">
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Huey's Autos</p>
+            </footer>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
